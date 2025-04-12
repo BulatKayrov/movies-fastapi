@@ -1,18 +1,22 @@
 import uvicorn
 from fastapi import FastAPI, Request
 
+from api import router as api_router_v1
+
 app = FastAPI(
-    title='Movies',
-    version='1.0',
-    description='Movie app',
-    docs_url='/docs',
+    title="Movies",
+    version="1.0",
+    description="Movie app",
+    docs_url="/docs",
 )
+app.include_router(api_router_v1)
 
 
-@app.get('/')
+@app.get("/")
 async def root(request: Request):
-    path = request.url.replace(path='/docs')
-    return {'docs': path}
+    path = request.url.replace(path="/docs")
+    return {"docs": path}
 
-if __name__ == '__main__':
-    uvicorn.run(app)
+
+if __name__ == "__main__":
+    uvicorn.run(app="main:app", host="0.0.0.0", port=8000, reload=True)
