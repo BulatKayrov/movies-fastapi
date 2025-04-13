@@ -1,10 +1,10 @@
 from fastapi import HTTPException, status
 
-from api.v1.movie.crud import DATABASE
+from api.v1.movie.crud import storage
 
 
 async def find_movie_by_id(slug: str):
-    film = next((item for item in DATABASE if item.slug == slug), None)
+    film = storage.find_by_slug(slug)
     if not film:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Movie not found"
