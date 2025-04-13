@@ -1,5 +1,4 @@
 from api.v1.movie.crud import DATABASE
-from api.v1.movie.schemas import SMovie
 from fastapi import HTTPException, status
 
 
