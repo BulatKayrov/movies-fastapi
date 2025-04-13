@@ -1,5 +1,3 @@
-import random
-
 from fastapi import APIRouter
 from fastapi.params import Depends
 
@@ -26,7 +24,6 @@ async def create_one_movie(
     # description: Annotated[str, Form(min_length=1, max_length=50)],
     # year: Annotated[int, Form(ge=1, le=1_000_000)],
 ):
-    pk = random.randint(1, 1_000_000)
-    movie = SMovie(movie_id=pk, **data.model_dump())
+    movie = SMovie(**data.model_dump())
     DATABASE.append(movie)
     return movie
