@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from pydantic import BaseModel
 
-from api.v1.movie.schemas import SMovie, SMovieCreate
+from api.v1.movie.schemas import SMovie, SMovieCreate, SMovieUpdate
 
 DATABASE = [
     SMovie(slug="1", title="Terminator 1", description="Nice film 1", year=1999),
@@ -41,6 +41,11 @@ class StorageMovie(BaseModel):
 
     def delete_record(self, movie: SMovie):
         self.delete_by_slug(slug=movie.slug)
+
+    def update_record(self, movie: SMovie, movie_in: SMovieUpdate):
+        for key, value in movie_in:
+            setattr(movie, key, value)
+        return movie
 
 
 storage = StorageMovie()
