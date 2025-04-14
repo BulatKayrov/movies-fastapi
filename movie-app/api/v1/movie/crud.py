@@ -36,6 +36,12 @@ class StorageMovie(BaseModel):
         for item in DATABASE:
             self.data_files[item.slug] = item
 
+    def delete_by_slug(self, slug: str):
+        self.data_files.pop(slug, None)
+
+    def delete_record(self, movie: SMovie):
+        self.delete_by_slug(slug=movie.slug)
+
 
 storage = StorageMovie()
 storage.filling()
