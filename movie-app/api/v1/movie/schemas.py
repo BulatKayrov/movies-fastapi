@@ -29,3 +29,7 @@ class SMoviePartialUpdate(BaseModel):
     title: str | None = None
     description: str | None = None
     year: int | None = None
+
+
+class SMovieResponseForAdmin(SMovie):
+    notes: str
