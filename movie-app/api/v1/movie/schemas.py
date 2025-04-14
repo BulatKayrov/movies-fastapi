@@ -23,3 +23,9 @@ class SMovieCreate(SMovie):
 
 class SMovieUpdate(SMovieBase):
     pass
+
+
+class SMoviePartialUpdate(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    year: int | None = None

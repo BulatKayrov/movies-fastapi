@@ -4,7 +4,7 @@ from fastapi.params import Depends
 from api.tools import RESPONSES
 from api.v1.movie.crud import storage
 from api.v1.movie.dependecies import find_movie_by_slug
-from api.v1.movie.schemas import SMovie, SMovieCreate, SMovieUpdate
+from api.v1.movie.schemas import SMovie, SMovieCreate, SMovieUpdate, SMoviePartialUpdate
 
 router = APIRouter(prefix="/movies", tags=["Фильмы"])
 
@@ -35,3 +35,10 @@ async def delete_one_movie(movie=Depends(find_movie_by_slug)):
 @router.put(path="/{slug}", response_model=SMovie)
 async def update_one_movie(movie_in: SMovieUpdate, movie=Depends(find_movie_by_slug)):
     return storage.update_record(movie=movie, movie_in=movie_in)
+
+
+@router.patch(path="/{slug}", response_model=SMovie)
+async def partial_update(
+    movie_in: SMoviePartialUpdate, movie=Depends(find_movie_by_slug)
+):
+    return storage.update(movie=movie, movie_in=movie_in, partial=True)

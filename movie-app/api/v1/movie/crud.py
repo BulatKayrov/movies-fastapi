@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from pydantic import BaseModel
 
-from api.v1.movie.schemas import SMovie, SMovieCreate, SMovieUpdate
+from api.v1.movie.schemas import SMovie, SMovieCreate, SMovieUpdate, SMoviePartialUpdate
 
 DATABASE = [
     SMovie(slug="1", title="Terminator 1", description="Nice film 1", year=1999),
@@ -44,6 +44,17 @@ class StorageMovie(BaseModel):
 
     def update_record(self, movie: SMovie, movie_in: SMovieUpdate):
         for key, value in movie_in:
+            setattr(movie, key, value)
+        return movie
+
+    def update(
+        self, movie: SMovie, movie_in: SMoviePartialUpdate, partial: bool = False
+    ):
+        """Универсальный метод обновление записи"""
+        for key, value in movie_in.model_dump(
+            exclude_none=partial,
+            exclude_unset=partial,
+        ).items():
             setattr(movie, key, value)
         return movie
 
