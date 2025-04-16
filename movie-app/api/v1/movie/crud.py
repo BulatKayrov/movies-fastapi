@@ -1,7 +1,7 @@
-from fastapi import HTTPException, status
 from pydantic import BaseModel
 
 from api.v1.movie.schemas import SMovie, SMovieCreate, SMovieUpdate, SMoviePartialUpdate
+from core.config import settings
 
 DATABASE = [
     SMovie(slug="1", title="Terminator 1", description="Nice film 1", year=1999),
@@ -10,9 +10,21 @@ DATABASE = [
 ]
 
 
+def save_movie(func):
+    def wrapper(*args, **kwargs):
+        database_url = settings.DATABASE
+        result = func(*args, **kwargs)
+        try:
+            database_url.write_text(result.model_dump_json(indent=4))
+        except Exception:
+            pass
+
+    return wrapper
+
+
 class StorageMovie(BaseModel):
 
-    data_files: dict[str, SMovie] = {}  # {'slug': SMovie()}
+    cashed_slug = []  # uniq slug
 
     def find_all(self):
         return list(self.data_files.values())
@@ -21,20 +33,13 @@ class StorageMovie(BaseModel):
         obj = self.data_files.get(slug)
         return obj
 
+    @save_movie
     def create(self, data: SMovieCreate):
         new_movie = SMovie(**data.model_dump())
-        slug = new_movie.slug
-        if slug not in self.data_files:
-            self.data_files[slug] = new_movie
-            return
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Movie exists")
-
-    def filling(self):
-        self._run()
-
-    def _run(self):
-        for item in DATABASE:
-            self.data_files[item.slug] = item
+        if new_movie.slug in self.cashed_slug:
+            raise Exception(f"Slug {new_movie.slug} already exists")
+        self.cashed_slug.append(new_movie.slug)
+        return new_movie
 
     def delete_by_slug(self, slug: str):
         self.data_files.pop(slug, None)
@@ -60,4 +65,3 @@ class StorageMovie(BaseModel):
 
 
 storage = StorageMovie()
-storage.filling()
