@@ -4,6 +4,7 @@ import uvicorn
 from fastapi import FastAPI, Request
 
 from api import router as api_router_v1
+from app_lifespan import lifespan
 from core.config import settings
 
 app = FastAPI(
@@ -11,6 +12,7 @@ app = FastAPI(
     version="1.0",
     description="Movie app",
     docs_url="/docs",
+    lifespan=lifespan,
 )
 app.include_router(api_router_v1)
 logging.basicConfig(level=settings.LOG_LEVEL, format=settings.LOG_FORMAT)

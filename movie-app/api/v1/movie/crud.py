@@ -13,6 +13,17 @@ class StorageMovie(BaseModel):
 
     data_files: dict[str, SMovie] = {}  # {'slug': SMovie()}
 
+    def init_storage(self) -> None:
+        try:
+            data = StorageMovie.from_statement()
+        except ValidationError:
+            self.save()
+            logger.warning("Storage module reloaded")
+            return
+
+        self.data_files.update(data.data_files)
+        logger.warning("Storage module loaded")
+
     def save(self):
         settings.DB_URL.write_text(self.model_dump_json(indent=4))
         logger.info("New movie saved")
@@ -67,10 +78,4 @@ class StorageMovie(BaseModel):
         return movie
 
 
-try:
-    storage = StorageMovie.from_statement()
-    logger.warning("Storage module loaded")
-except ValidationError as e:
-    storage = StorageMovie()
-    storage.save()
-    logger.warning("Storage module reloaded")
+storage = StorageMovie()
