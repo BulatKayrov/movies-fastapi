@@ -1,0 +1,10 @@
+{
+    "data_files": {
+        "string": {
+            "title": "string",
+            "description": "string",
+            "year": 1,
+            "slug": "string"
+        }
+    }
+}

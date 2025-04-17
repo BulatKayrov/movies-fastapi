@@ -1,18 +1,22 @@
 from fastapi import HTTPException, status
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from api.v1.movie.schemas import SMovie, SMovieCreate, SMovieUpdate, SMoviePartialUpdate
-
-DATABASE = [
-    SMovie(slug="1", title="Terminator 1", description="Nice film 1", year=1999),
-    SMovie(slug="2", title="Terminator 2", description="Nice film 2", year=2000),
-    SMovie(slug="3", title="Terminator 3", description="Nice film 3", year=2001),
-]
+from core.config import settings
 
 
 class StorageMovie(BaseModel):
 
     data_files: dict[str, SMovie] = {}  # {'slug': SMovie()}
+
+    def save(self):
+        settings.DB_URL.write_text(self.model_dump_json(indent=4))
+
+    @classmethod
+    def from_statement(cls):
+        if not settings.DB_URL.exists():
+            return StorageMovie()
+        return cls.model_validate_json(settings.DB_URL.read_text())
 
     def find_all(self):
         return list(self.data_files.values())
@@ -26,18 +30,13 @@ class StorageMovie(BaseModel):
         slug = new_movie.slug
         if slug not in self.data_files:
             self.data_files[slug] = new_movie
+            self.save()
             return
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Movie exists")
 
-    def filling(self):
-        self._run()
-
-    def _run(self):
-        for item in DATABASE:
-            self.data_files[item.slug] = item
-
     def delete_by_slug(self, slug: str):
         self.data_files.pop(slug, None)
+        self.save()
 
     def delete_record(self, movie: SMovie):
         self.delete_by_slug(slug=movie.slug)
@@ -45,6 +44,7 @@ class StorageMovie(BaseModel):
     def update_record(self, movie: SMovie, movie_in: SMovieUpdate):
         for key, value in movie_in:
             setattr(movie, key, value)
+        self.save()
         return movie
 
     def update(
@@ -56,8 +56,13 @@ class StorageMovie(BaseModel):
             exclude_unset=partial,
         ).items():
             setattr(movie, key, value)
+
+        self.save()
         return movie
 
 
-storage = StorageMovie()
-storage.filling()
+try:
+    storage = StorageMovie.from_statement()
+except ValidationError as e:
+    storage = StorageMovie()
+    storage.save()
