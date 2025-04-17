@@ -1,7 +1,10 @@
+import logging
+
 import uvicorn
 from fastapi import FastAPI, Request
 
 from api import router as api_router_v1
+from core.config import settings
 
 app = FastAPI(
     title="Movies",
@@ -10,6 +13,7 @@ app = FastAPI(
     docs_url="/docs",
 )
 app.include_router(api_router_v1)
+logging.basicConfig(level=settings.LOG_LEVEL, format=settings.LOG_FORMAT)
 
 
 @app.get("/")

@@ -5,6 +5,12 @@
             "description": "string",
             "year": 1,
             "slug": "string"
+        },
+        "hello from logger": {
+            "title": "string",
+            "description": "string",
+            "year": 1,
+            "slug": "hello from logger"
         }
     }
 }

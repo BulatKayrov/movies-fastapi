@@ -1,8 +1,12 @@
+import logging
+
 from fastapi import HTTPException, status
 from pydantic import BaseModel, ValidationError
 
 from api.v1.movie.schemas import SMovie, SMovieCreate, SMovieUpdate, SMoviePartialUpdate
 from core.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 class StorageMovie(BaseModel):
@@ -11,6 +15,7 @@ class StorageMovie(BaseModel):
 
     def save(self):
         settings.DB_URL.write_text(self.model_dump_json(indent=4))
+        logger.info("New movie saved")
 
     @classmethod
     def from_statement(cls):
@@ -31,6 +36,7 @@ class StorageMovie(BaseModel):
         if slug not in self.data_files:
             self.data_files[slug] = new_movie
             self.save()
+            logger.info("Mobie by slug created %s", slug)
             return
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Movie exists")
 
@@ -63,6 +69,8 @@ class StorageMovie(BaseModel):
 
 try:
     storage = StorageMovie.from_statement()
+    logger.warning("Storage module loaded")
 except ValidationError as e:
     storage = StorageMovie()
     storage.save()
+    logger.warning("Storage module reloaded")
