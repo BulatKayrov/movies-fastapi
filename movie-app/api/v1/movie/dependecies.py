@@ -3,7 +3,7 @@ from fastapi import HTTPException, status
 from api.v1.movie.crud import storage
 
 
-async def find_movie_by_slug(slug: str):
+def find_movie_by_slug(slug: str):
     film = storage.find_by_slug(slug)
     if not film:
         raise HTTPException(

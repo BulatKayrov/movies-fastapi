@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 class StorageMovie(BaseModel):
-
     data_files: dict[str, SMovie] = {}  # {'slug': SMovie()}
 
     def init_storage(self) -> None:
@@ -46,14 +45,13 @@ class StorageMovie(BaseModel):
         slug = new_movie.slug
         if slug not in self.data_files:
             self.data_files[slug] = new_movie
-            self.save()
+
             logger.info("Mobie by slug created %s", slug)
-            return
+            return new_movie
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Movie exists")
 
     def delete_by_slug(self, slug: str):
         self.data_files.pop(slug, None)
-        self.save()
 
     def delete_record(self, movie: SMovie):
         self.delete_by_slug(slug=movie.slug)
@@ -61,7 +59,7 @@ class StorageMovie(BaseModel):
     def update_record(self, movie: SMovie, movie_in: SMovieUpdate):
         for key, value in movie_in:
             setattr(movie, key, value)
-        self.save()
+
         return movie
 
     def update(
@@ -74,7 +72,6 @@ class StorageMovie(BaseModel):
         ).items():
             setattr(movie, key, value)
 
-        self.save()
         return movie
 
 

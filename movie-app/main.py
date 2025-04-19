@@ -19,7 +19,7 @@ logging.basicConfig(level=settings.LOG_LEVEL, format=settings.LOG_FORMAT)
 
 
 @app.get("/")
-async def root(request: Request):
+def root(request: Request):
     path = request.url.replace(path="/docs")
     return {"docs": path}
 
