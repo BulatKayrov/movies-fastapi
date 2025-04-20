@@ -5,13 +5,17 @@ from fastapi.params import Depends
 
 from api.tools import RESPONSES
 from api.v1.movie.crud import storage
-from api.v1.movie.dependecies import find_movie_by_slug, save_record, get_token
+from api.v1.movie.dependecies import find_movie_by_slug, save_record, basic_auth_header
 from api.v1.movie.schemas import SMovie, SMovieCreate, SMovieUpdate, SMoviePartialUpdate
 
 router = APIRouter(
     prefix="/movies",
     tags=["Фильмы"],
-    dependencies=[Depends(save_record), Depends(get_token)],
+    dependencies=[
+        Depends(save_record),
+        Depends(basic_auth_header),
+        # Depends(get_token),
+    ],
 )
 logger = getLogger(__name__)
 

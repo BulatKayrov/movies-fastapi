@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     API_TOKENS: frozenset[str] = frozenset(
         {"aK1J-Ez_gQc4iHh8Pa6J-w", "vHOm99YdSFO7c3PuIA6guQ"}
     )
+    USER_DB: dict = {"just": "do it"}
 
 
 settings = Settings()

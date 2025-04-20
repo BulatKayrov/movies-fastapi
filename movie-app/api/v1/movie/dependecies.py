@@ -1,7 +1,12 @@
 import logging
 
 from fastapi import HTTPException, status, BackgroundTasks, Request, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import (
+    HTTPBearer,
+    HTTPAuthorizationCredentials,
+    HTTPBasic,
+    HTTPBasicCredentials,
+)
 
 from api.v1.movie.crud import storage
 from core.config import settings
@@ -12,6 +17,26 @@ UNSAFE_METHODS = frozenset({"POST", "PUT", "PATCH", "DELETE"})
 static_api_token = HTTPBearer(
     auto_error=False, scheme_name="Static API token", description="Static API token"
 )
+
+basic_auth = HTTPBasic(
+    scheme_name="Basic",
+    description="Basic auth scheme username and password required",
+    auto_error=False,
+)
+
+
+def basic_auth_header(credentials: HTTPBasicCredentials | None = Depends(basic_auth)):
+    if (
+        credentials
+        and credentials.username in settings.USER_DB
+        and settings.USER_DB[credentials.username] == credentials.password
+    ):
+        return
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid credentials [username or password]",
+        headers={"WWW-Authenticate": "Basic"},
+    )
 
 
 def find_movie_by_slug(slug: str):
