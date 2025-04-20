@@ -1,10 +1,11 @@
 import logging
 
-from fastapi import HTTPException, status, BackgroundTasks
+from fastapi import HTTPException, status, BackgroundTasks, Request
 
 from api.v1.movie.crud import storage
 
 logger = logging.getLogger(__name__)
+UNSAFE_METHODS = frozenset({"POST", "PUT", "PATCH", "DELETE"})
 
 
 def find_movie_by_slug(slug: str):
@@ -18,7 +19,9 @@ def find_movie_by_slug(slug: str):
 
 def save_record(
     background_task: BackgroundTasks,
+    request: Request,
 ):
     yield
-    logger.info("Saving movie record")
-    background_task.add_task(storage.save())
+    if request.method in UNSAFE_METHODS:
+        logger.info("Saving movie record")
+        background_task.add_task(storage.save())
