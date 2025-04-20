@@ -1,11 +1,11 @@
 from logging import getLogger
 
-from fastapi import APIRouter, status, BackgroundTasks
+from fastapi import APIRouter, status
 from fastapi.params import Depends
 
 from api.tools import RESPONSES
 from api.v1.movie.crud import storage
-from api.v1.movie.dependecies import find_movie_by_slug, save_record
+from api.v1.movie.dependecies import find_movie_by_slug, save_record, get_token
 from api.v1.movie.schemas import SMovie, SMovieCreate, SMovieUpdate, SMoviePartialUpdate
 
 router = APIRouter(
@@ -14,7 +14,10 @@ router = APIRouter(
 logger = getLogger(__name__)
 
 
-@router.get(path="/", response_model=list[SMovie])
+@router.get(
+    path="/",
+    response_model=list[SMovie],
+)
 def get_all_movies():
     return storage.find_all()
 
@@ -25,21 +28,20 @@ def get_one_movie(movie=Depends(find_movie_by_slug)):
 
 
 @router.post(path="/", response_model=SMovie)
-def create_one_movie(data: SMovieCreate):
+def create_one_movie(data: SMovieCreate, _=Depends(get_token)):
     return storage.create(data=data)
 
 
 @router.delete(
     path="/{slug}", responses={**RESPONSES}, status_code=status.HTTP_204_NO_CONTENT
 )
-def delete_one_movie(movie=Depends(find_movie_by_slug)):
+def delete_one_movie(movie=Depends(find_movie_by_slug), _=Depends(get_token)):
     storage.delete_record(movie=movie)
 
 
 @router.put(path="/{slug}", response_model=SMovie)
 def update_one_movie(
-    movie_in: SMovieUpdate,
-    movie=Depends(find_movie_by_slug),
+    movie_in: SMovieUpdate, movie=Depends(find_movie_by_slug), _=Depends(get_token)
 ):
     return storage.update_record(movie=movie, movie_in=movie_in)
 
@@ -48,5 +50,6 @@ def update_one_movie(
 def partial_update(
     movie_in: SMoviePartialUpdate,
     movie=Depends(find_movie_by_slug),
+    _=Depends(get_token),
 ):
     return storage.update(movie=movie, movie_in=movie_in, partial=True)
