@@ -25,7 +25,14 @@ basic_auth = HTTPBasic(
 )
 
 
-def basic_auth_header(credentials: HTTPBasicCredentials | None = Depends(basic_auth)):
+def basic_auth_header(
+    request: Request,
+    credentials: HTTPBasicCredentials | None = Depends(basic_auth),
+):
+
+    if request.method not in UNSAFE_METHODS:
+        return
+
     if (
         credentials
         and credentials.username in settings.USER_DB
