@@ -7,9 +7,9 @@
             "slug": "string"
         },
         "strissssng": {
-            "title": "string",
-            "description": "string",
-            "year": 1,
+            "title": "new record",
+            "description": "new default description",
+            "year": 1999,
             "slug": "strissssng"
         }
     }
