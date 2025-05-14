@@ -18,5 +18,9 @@ class Settings(BaseSettings):
     )
     USER_DB: dict = {"1": "1"}
 
+    # redis
+    REDIS_HOST: str = "localhost"
+    REDIS_PORT: int = 7777
+
 
 settings = Settings()

@@ -1,0 +1,6 @@
+services:
+  redis-movie:
+    image: redis:latest
+    container_name: redis-movie
+    ports:
+      - "7777:6379"
