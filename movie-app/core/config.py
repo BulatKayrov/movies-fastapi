@@ -12,15 +12,14 @@ class Settings(BaseSettings):
     LOG_LEVEL: int = logging.INFO
     LOG_FORMAT: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
-    # jwt
-    API_TOKENS: frozenset[str] = frozenset(
-        {"aK1J-Ez_gQc4iHh8Pa6J-w", "vHOm99YdSFO7c3PuIA6guQ"}
-    )
     USER_DB: dict = {"1": "1"}
 
     # redis
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 7777
+    REDIS_DB: int = 0
+    REDIS_DB_TOKENS: int = 1
+    REDIS_DB_TOKENS_NAME: str = "tokens"
 
 
 settings = Settings()
