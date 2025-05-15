@@ -8,9 +8,8 @@ from fastapi.security import (
     HTTPBearer,
 )
 
+from api.v1.movie.auth.service import redis_auth_helper, redis_tokens_helper
 from api.v1.movie.crud import storage
-from core.config import settings
-from redis_depends import redis_tokens_helper
 
 logger = logging.getLogger(__name__)
 UNSAFE_METHODS = frozenset({"POST", "PUT", "PATCH", "DELETE"})
@@ -83,11 +82,14 @@ def validate_token(api_token: HTTPAuthorizationCredentials):
 
 
 def validate_basic(credentials: HTTPBasicCredentials):
-    if (
-        credentials.username in settings.USER_DB
-        and settings.USER_DB[credentials.username] == credentials.password
+    if credentials and redis_auth_helper.validate_user_password(
+        username=credentials.username, password=credentials.password
     ):
         return
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid credentials [username or password]",
+    )
 
 
 def api_or_basic(

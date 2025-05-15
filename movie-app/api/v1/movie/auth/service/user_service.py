@@ -21,7 +21,8 @@ class AbstractTokenHelper(ABC):
 
     def validate_user_password(self, username: str, password: str):
         password_db = self.get_user_password(username)
-        if not password_db:
+        print(password_db)
+        if password_db is None:
             return False
         return self.verify_password(password1=password_db, password2=password)
 
