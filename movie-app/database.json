@@ -6,17 +6,11 @@
             "year": 1,
             "slug": "string"
         },
-        "strissssng": {
-            "title": "new record",
-            "description": "new default description",
-            "year": 1999,
-            "slug": "strissssng"
-        },
-        "redis_cli": {
-            "title": "for redis",
-            "description": "for redis database",
-            "year": 1999,
-            "slug": "redis_cli"
+        "asdasd": {
+            "title": "asdasd",
+            "description": "asdasd",
+            "year": 111,
+            "slug": "asdasd"
         }
     }
 }

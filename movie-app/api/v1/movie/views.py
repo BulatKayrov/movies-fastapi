@@ -3,10 +3,10 @@ from logging import getLogger
 from fastapi import APIRouter, status
 from fastapi.params import Depends
 
-from api.tools import RESPONSES
 from api.v1.movie.crud import storage
-from api.v1.movie.dependecies import find_movie_by_slug, save_record, api_or_basic
-from api.v1.movie.schemas import SMovie, SMovieCreate, SMovieUpdate, SMoviePartialUpdate
+from api.v1.movie.dependecies import api_or_basic, find_movie_by_slug, save_record
+from api.v1.movie.schemas import SMovie, SMovieCreate, SMoviePartialUpdate, SMovieUpdate
+from tools import RESPONSES
 
 router = APIRouter(
     prefix="/movies",

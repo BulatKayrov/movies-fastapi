@@ -10,7 +10,7 @@ from fastapi.security import (
 
 from api.v1.movie.crud import storage
 from core.config import settings
-from redis_depends import redis
+from redis_depends import redis_tokens_helper
 
 logger = logging.getLogger(__name__)
 UNSAFE_METHODS = frozenset({"POST", "PUT", "PATCH", "DELETE"})
@@ -75,7 +75,7 @@ def save_record(background_task: BackgroundTasks, request: Request):
 
 
 def validate_token(api_token: HTTPAuthorizationCredentials):
-    if redis.sismember(settings.REDIS_DB_TOKENS_NAME, api_token.credentials):
+    if redis_tokens_helper.token_exists(api_token.credentials):
         return api_token
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API token"

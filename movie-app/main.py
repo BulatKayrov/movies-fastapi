@@ -1,7 +1,8 @@
 import logging
 
 import uvicorn
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
+from starlette.responses import RedirectResponse
 
 from api import router as api_router_v1
 from app_lifespan import lifespan
@@ -19,9 +20,8 @@ logging.basicConfig(level=settings.LOG_LEVEL, format=settings.LOG_FORMAT)
 
 
 @app.get("/")
-def root(request: Request):
-    path = request.url.replace(path="/docs")
-    return {"docs": path}
+def root():
+    return RedirectResponse(url="/docs")
 
 
 if __name__ == "__main__":
