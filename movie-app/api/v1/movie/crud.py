@@ -2,11 +2,19 @@ import logging
 
 from fastapi import HTTPException, status
 from pydantic import BaseModel, ValidationError
+from redis import Redis
 
-from api.v1.movie.schemas import SMovie, SMovieCreate, SMovieUpdate, SMoviePartialUpdate
+from api.v1.movie.schemas import SMovie, SMovieCreate, SMoviePartialUpdate, SMovieUpdate
 from core.config import settings
 
 logger = logging.getLogger(__name__)
+
+redis_movie = Redis(
+    host=settings.REDIS_HOST,
+    port=settings.REDIS_PORT,
+    db=settings.REDIS_DB,
+    decode_responses=True,
+)
 
 
 class StorageMovie(BaseModel):
@@ -43,8 +51,13 @@ class StorageMovie(BaseModel):
     def create(self, data: SMovieCreate):
         new_movie = SMovie(**data.model_dump())
         slug = new_movie.slug
-        if slug not in self.data_files:
-            self.data_files[slug] = new_movie
+
+        if not redis_movie.hget(name=settings.REDIS_HASH_KEY_DB, key=slug):
+            redis_movie.hset(
+                name=settings.REDIS_HASH_KEY_DB,
+                key=slug,
+                value=new_movie.model_dump_json(),
+            )
 
             logger.info("Mobie by slug created %s", slug)
             return new_movie
