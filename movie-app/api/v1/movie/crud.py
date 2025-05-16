@@ -1,7 +1,6 @@
 import logging
 
 from fastapi import HTTPException, status
-from pydantic import BaseModel, ValidationError
 from redis import Redis
 
 from api.v1.movie.schemas import SMovie, SMovieCreate, SMoviePartialUpdate, SMovieUpdate
@@ -17,47 +16,25 @@ redis_movie = Redis(
 )
 
 
-class StorageMovie(BaseModel):
-    data_files: dict[str, SMovie] = {}  # {'slug': SMovie()}
-
-    def init_storage(self) -> None:
-        try:
-            data = StorageMovie.from_statement()
-        except ValidationError:
-            self.save()
-            logger.warning("Storage module reloaded")
-            return
-
-        self.data_files.update(data.data_files)
-        logger.warning("Storage module loaded")
-
-    def save(self):
-        settings.DB_URL.write_text(self.model_dump_json(indent=4))
-        logger.info("New movie saved")
+class StorageMovie:
 
     @classmethod
-    def from_statement(cls):
-        if not settings.DB_URL.exists():
-            return StorageMovie()
-        return cls.model_validate_json(settings.DB_URL.read_text())
-
-    def find_all(self):
-        # objects = redis_movie.hgetall(name=settings.REDIS_HASH_KEY_DB)
-        # return [json.loads(movie) for movie in objects.values()]
+    def find_all(cls):
         values = redis_movie.hvals(name=settings.REDIS_HASH_KEY_DB)
         return [SMovie.model_validate_json(item) for item in values]
 
-    def find_by_slug(self, slug: str):
+    @classmethod
+    def find_by_slug(cls, slug: str):
         obj = redis_movie.hget(name=settings.REDIS_HASH_KEY_DB, key=slug)
         if obj:
-            # return json.loads(obj.encode()) if obj else None
             return SMovie.model_validate_json(obj)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Movie not found",
         )
 
-    def create(self, data: SMovieCreate):
+    @classmethod
+    def create(cls, data: SMovieCreate):
         new_movie = SMovie(**data.model_dump())
         slug = new_movie.slug
 
@@ -72,21 +49,24 @@ class StorageMovie(BaseModel):
             return new_movie
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Movie exists")
 
-    def delete_by_slug(self, slug: str):
-        # self.data_files.pop(slug, None)
+    @classmethod
+    def delete_by_slug(cls, slug: str):
         redis_movie.hdel(settings.REDIS_HASH_KEY_DB, slug)
 
-    def delete_record(self, movie: SMovie):
-        self.delete_by_slug(slug=movie.slug)
+    @classmethod
+    def delete_record(cls, movie: SMovie):
+        cls.delete_by_slug(slug=movie.slug)
 
-    def update_record(self, movie: SMovie, movie_in: SMovieUpdate):
+    @classmethod
+    def update_record(cls, movie: SMovie, movie_in: SMovieUpdate):
         for key, value in movie_in:
             setattr(movie, key, value)
 
         return movie
 
+    @classmethod
     def update(
-        self, movie: SMovie, movie_in: SMoviePartialUpdate, partial: bool = False
+        cls, movie: SMovie, movie_in: SMoviePartialUpdate, partial: bool = False
     ):
         """Универсальный метод обновление записи"""
         for key, value in movie_in.model_dump(
