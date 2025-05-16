@@ -19,6 +19,14 @@ redis_movie = Redis(
 class StorageMovie:
 
     @classmethod
+    def save(cls, data):
+        redis_movie.hset(
+            name=settings.REDIS_HASH_KEY_DB,
+            key=data.slug,
+            value=data.model_dump_json(),
+        )
+
+    @classmethod
     def find_all(cls):
         values = redis_movie.hvals(name=settings.REDIS_HASH_KEY_DB)
         return [SMovie.model_validate_json(item) for item in values]
@@ -34,17 +42,12 @@ class StorageMovie:
         )
 
     @classmethod
-    def create(cls, data: SMovieCreate):
+    def create(cls, data: SMovieCreate | SMovie):
         new_movie = SMovie(**data.model_dump())
         slug = new_movie.slug
 
         if not redis_movie.hget(name=settings.REDIS_HASH_KEY_DB, key=slug):
-            redis_movie.hset(
-                name=settings.REDIS_HASH_KEY_DB,
-                key=slug,
-                value=new_movie.model_dump_json(),
-            )
-
+            cls.save(data)
             logger.info("Mobie by slug created %s", slug)
             return new_movie
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Movie exists")
@@ -58,24 +61,32 @@ class StorageMovie:
         cls.delete_by_slug(slug=movie.slug)
 
     @classmethod
-    def update_record(cls, movie: SMovie, movie_in: SMovieUpdate):
-        for key, value in movie_in:
-            setattr(movie, key, value)
-
-        return movie
+    def update_record(cls, slug: str, movie_in: SMovieUpdate):
+        obj = cls.find_by_slug(slug=slug)
+        if obj:
+            for key, value in movie_in:
+                setattr(obj, key, value)
+            cls.save(data=obj)
+            return obj
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="Movie not found"
+        )
 
     @classmethod
-    def update(
-        cls, movie: SMovie, movie_in: SMoviePartialUpdate, partial: bool = False
-    ):
+    def update(cls, slug: str, movie_in: SMoviePartialUpdate, partial: bool = False):
         """Универсальный метод обновление записи"""
-        for key, value in movie_in.model_dump(
-            exclude_none=partial,
-            exclude_unset=partial,
-        ).items():
-            setattr(movie, key, value)
-
-        return movie
+        obj = cls.find_by_slug(slug=slug)
+        if obj:
+            for key, value in movie_in.model_dump(
+                exclude_none=partial,
+                exclude_unset=partial,
+            ).items():
+                setattr(obj, key, value)
+            cls.save(data=obj)
+            return obj
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="Movie not found"
+        )
 
 
 storage = StorageMovie()
