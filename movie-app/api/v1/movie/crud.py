@@ -1,4 +1,3 @@
-import json
 import logging
 
 from fastapi import HTTPException, status
@@ -43,9 +42,10 @@ class StorageMovie(BaseModel):
         return cls.model_validate_json(settings.DB_URL.read_text())
 
     def find_all(self):
-        objects = redis_movie.hgetall(name=settings.REDIS_HASH_KEY_DB)
-        return [json.loads(movie) for movie in objects.values()]
-        # return list(self.data_files.values())
+        # objects = redis_movie.hgetall(name=settings.REDIS_HASH_KEY_DB)
+        # return [json.loads(movie) for movie in objects.values()]
+        values = redis_movie.hvals(name=settings.REDIS_HASH_KEY_DB)
+        return [SMovie.model_validate_json(item) for item in values]
 
     def find_by_slug(self, slug: str):
         obj = redis_movie.hget(name=settings.REDIS_HASH_KEY_DB, key=slug)
@@ -73,7 +73,8 @@ class StorageMovie(BaseModel):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Movie exists")
 
     def delete_by_slug(self, slug: str):
-        self.data_files.pop(slug, None)
+        # self.data_files.pop(slug, None)
+        redis_movie.hdel(settings.REDIS_HASH_KEY_DB, slug)
 
     def delete_record(self, movie: SMovie):
         self.delete_by_slug(slug=movie.slug)
