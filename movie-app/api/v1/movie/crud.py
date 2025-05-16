@@ -44,11 +44,9 @@ class StorageMovie:
     @classmethod
     def create(cls, data: SMovieCreate | SMovie):
         new_movie = SMovie(**data.model_dump())
-        slug = new_movie.slug
-
-        if not redis_movie.hget(name=settings.REDIS_HASH_KEY_DB, key=slug):
+        if not cls.find_by_slug(slug=new_movie.slug):
             cls.save(data)
-            logger.info("Mobie by slug created %s", slug)
+            logger.info("Mobie by slug created %s", new_movie.slug)
             return new_movie
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Movie exists")
 

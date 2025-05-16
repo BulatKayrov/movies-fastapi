@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import BackgroundTasks, Depends, HTTPException, Request, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import (
     HTTPAuthorizationCredentials,
     HTTPBasic,
@@ -64,13 +64,6 @@ def get_token(
             detail="API token is required.",
         )
     return validate_token(api_token)
-
-
-def save_record(background_task: BackgroundTasks, request: Request):
-    yield
-    if request.method in UNSAFE_METHODS:
-        logger.info("Saving movie record")
-        background_task.add_task(storage.save)
 
 
 def validate_token(api_token: HTTPAuthorizationCredentials):
