@@ -49,7 +49,8 @@ class StorageMovie(BaseModel):
 
     def find_by_slug(self, slug: str):
         obj = redis_movie.hget(name=settings.REDIS_HASH_KEY_DB, key=slug)
-        return json.loads(obj.encode()) if obj else None
+        # return json.loads(obj.encode()) if obj else None
+        return SMovie.model_validate_json(obj)
 
     def create(self, data: SMovieCreate):
         new_movie = SMovie(**data.model_dump())
