@@ -1,3 +1,4 @@
+import json
 import logging
 
 from fastapi import HTTPException, status
@@ -42,11 +43,13 @@ class StorageMovie(BaseModel):
         return cls.model_validate_json(settings.DB_URL.read_text())
 
     def find_all(self):
-        return list(self.data_files.values())
+        objects = redis_movie.hgetall(name=settings.REDIS_HASH_KEY_DB)
+        return [json.loads(movie) for movie in objects.values()]
+        # return list(self.data_files.values())
 
     def find_by_slug(self, slug: str):
-        obj = self.data_files.get(slug)
-        return obj
+        obj = redis_movie.hget(name=settings.REDIS_HASH_KEY_DB, key=slug)
+        return json.loads(obj.encode()) if obj else None
 
     def create(self, data: SMovieCreate):
         new_movie = SMovie(**data.model_dump())
