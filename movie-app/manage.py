@@ -1,3 +1,4 @@
+#! /usr/bin/env -S uv run --script
 import typer
 
 from cli_commands.main import app as cli_app
