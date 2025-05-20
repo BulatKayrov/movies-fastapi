@@ -12,3 +12,8 @@ def check_token(token: str = typer.Argument()):
         print(f"Token [green][italic]{token} exists[/italic][/green]")
     else:
         print("Token [red][bold]does not exist[/bold][/red]")
+
+
+@app.command(help="Get all tokens")
+def list():
+    print(redis_tokens_helper.get_tokens())
