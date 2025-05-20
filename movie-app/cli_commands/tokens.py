@@ -1,5 +1,6 @@
 import typer
 from rich import print
+from rich.markdown import Markdown
 
 from api.v1.movie.auth.service import redis_tokens_helper
 
@@ -16,4 +17,5 @@ def check_token(token: str = typer.Argument()):
 
 @app.command(help="Get all tokens")
 def list():
-    print(redis_tokens_helper.get_tokens())
+    print(Markdown("## Tokens"))
+    print("\n".join(redis_tokens_helper.get_tokens()))
