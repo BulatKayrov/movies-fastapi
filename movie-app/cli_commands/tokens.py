@@ -19,3 +19,20 @@ def check_token(token: str = typer.Argument()):
 def list():
     print(Markdown("## Tokens"))
     print("\n".join(redis_tokens_helper.get_tokens()))
+
+
+@app.command(help="Генерация нового токена и сохранение его")
+def create():
+    print(redis_tokens_helper.create())
+
+
+@app.command(help="Добавление нового токена в БД")
+def add(token: str = typer.Argument(help="ТОКЕН который необходимо добавить в БД")):
+    redis_tokens_helper.add_token(token)
+    print(f"{token} saved")
+
+
+@app.command(help="Удаление токена из БД")
+def delete(token: str = typer.Argument(help="ТОКЕН который необходимо удалить")):
+    redis_tokens_helper.delete_token(token)
+    print(f"{token} deleted")

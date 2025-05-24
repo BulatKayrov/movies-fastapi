@@ -29,6 +29,10 @@ class AbstractTokenHelper(ABC):
     def get_tokens(self):
         pass
 
+    @abstractmethod
+    def delete_token(self, token):
+        pass
+
 
 class RedisTokenHelper(AbstractTokenHelper):
     def __init__(
@@ -54,6 +58,13 @@ class RedisTokenHelper(AbstractTokenHelper):
 
     def get_tokens(self):
         return self.redis.smembers(self.token_set)
+
+    def delete_token(self, token):
+        self.redis.srem(self.token_set, token)
+
+    def create(self):
+        token = self.generate_token_and_save()
+        return token
 
 
 redis_tokens_helper = RedisTokenHelper(
