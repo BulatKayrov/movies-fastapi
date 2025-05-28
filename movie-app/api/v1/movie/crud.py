@@ -36,10 +36,7 @@ class StorageMovie:
         obj = redis_movie.hget(name=settings.REDIS_HASH_KEY_DB, key=slug)
         if obj:
             return SMovie.model_validate_json(obj)
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Movie not found",
-        )
+        return None
 
     @classmethod
     def create(cls, data: SMovieCreate | SMovie):
