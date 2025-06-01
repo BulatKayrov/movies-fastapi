@@ -27,7 +27,7 @@ class StorageMovie:
         )
 
     @classmethod
-    def find_all(cls):
+    def find_all(cls) -> list[SMovie]:
         values = redis_movie.hvals(name=settings.REDIS_HASH_KEY_DB)
         return [SMovie.model_validate_json(item) for item in values]
 

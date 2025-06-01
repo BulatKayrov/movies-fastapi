@@ -24,7 +24,7 @@ logger = getLogger(__name__)
     path="/",
     response_model=list[SMovie],
 )
-def get_all_movies():
+def get_all_movies() -> list[SMovie]:
     return storage.find_all()
 
 
