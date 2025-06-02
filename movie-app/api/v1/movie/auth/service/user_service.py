@@ -1,14 +1,13 @@
 from abc import ABC, abstractmethod
 
-from redis import Redis
-
 from core.config import settings
+from redis import Redis
 
 
 class AbstractUserHelper(ABC):
 
     @abstractmethod
-    def get_user_password(self, username: str):
+    def get_user_password(self, username: str) -> str | None:
         pass
 
     @classmethod
@@ -19,9 +18,8 @@ class AbstractUserHelper(ABC):
         """
         return password1 == password2
 
-    def validate_user_password(self, username: str, password: str):
+    def validate_user_password(self, username: str, password: str) -> bool:
         password_db = self.get_user_password(username)
-        print(password_db)
         if password_db is None:
             return False
         return self.verify_password(password1=password_db, password2=password)
@@ -33,7 +31,7 @@ class RedisUserHelper(AbstractUserHelper):
         host: str,
         port: int,
         redis_db: int,
-    ):
+    ) -> None:
         self.redis = Redis(
             host=host,
             port=port,
@@ -41,7 +39,7 @@ class RedisUserHelper(AbstractUserHelper):
             db=redis_db,
         )
 
-    def get_user_password(self, username):
+    def get_user_password(self, username: str) -> str | None:
         return self.redis.get(username)
 
 

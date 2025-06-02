@@ -1,5 +1,8 @@
 import logging
 
+from api.v1.movie.auth.service import redis_auth_helper, redis_tokens_helper
+from api.v1.movie.crud import storage
+from api.v1.movie.schemas import SMovie
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import (
     HTTPAuthorizationCredentials,
@@ -7,9 +10,6 @@ from fastapi.security import (
     HTTPBasicCredentials,
     HTTPBearer,
 )
-
-from api.v1.movie.auth.service import redis_auth_helper, redis_tokens_helper
-from api.v1.movie.crud import storage
 
 logger = logging.getLogger(__name__)
 UNSAFE_METHODS = frozenset({"POST", "PUT", "PATCH", "DELETE"})
@@ -28,13 +28,13 @@ basic_auth = HTTPBasic(
 def basic_auth_header(
     request: Request,
     credentials: HTTPBasicCredentials | None = Depends(basic_auth),
-):
+) -> None:
 
     if request.method not in UNSAFE_METHODS:
         return
 
     if credentials:
-        return validate_basic(credentials=credentials)
+        validate_basic(credentials=credentials)
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid credentials [username or password]",
@@ -42,7 +42,7 @@ def basic_auth_header(
     )
 
 
-def find_movie_by_slug(slug: str):
+def find_movie_by_slug(slug: str) -> SMovie:
     film = storage.find_by_slug(slug)
     if not film:
         raise HTTPException(
@@ -54,7 +54,7 @@ def find_movie_by_slug(slug: str):
 def get_token(
     request: Request,
     api_token: HTTPAuthorizationCredentials | None = Depends(static_api_token),
-):
+) -> None:
     if request.method not in UNSAFE_METHODS:
         return
     logger.info("api token required %s", api_token)
@@ -63,18 +63,18 @@ def get_token(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="API token is required.",
         )
-    return validate_token(api_token)
+    validate_token(api_token)
 
 
-def validate_token(api_token: HTTPAuthorizationCredentials):
+def validate_token(api_token: HTTPAuthorizationCredentials) -> None:
     if redis_tokens_helper.token_exists(api_token.credentials):
-        return api_token
+        return None
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API token"
     )
 
 
-def validate_basic(credentials: HTTPBasicCredentials):
+def validate_basic(credentials: HTTPBasicCredentials) -> None:
     if credentials and redis_auth_helper.validate_user_password(
         username=credentials.username, password=credentials.password
     ):
@@ -89,16 +89,16 @@ def api_or_basic(
     request: Request,
     api_token: HTTPAuthorizationCredentials | None = Depends(static_api_token),
     credentials: HTTPBasicCredentials | None = Depends(basic_auth),
-):
+) -> None:
 
     if request.method not in UNSAFE_METHODS:
         return
 
     if credentials:
-        return validate_basic(credentials=credentials)
+        validate_basic(credentials=credentials)
 
     if api_token:
-        return validate_token(api_token=api_token)
+        validate_token(api_token=api_token)
 
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

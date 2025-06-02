@@ -2,9 +2,8 @@ import secrets
 from abc import ABC, abstractmethod
 from typing import Awaitable
 
-from redis import Redis
-
 from core.config import settings
+from redis import Redis
 
 
 class AbstractTokenHelper(ABC):
@@ -45,10 +44,10 @@ class RedisTokenHelper(AbstractTokenHelper):
     def token_exists(self, token: str) -> bool:
         return bool(self.redis.sismember(self.token_set, token))
 
-    def add_token(self, token):
+    def add_token(self, token: str) -> None:
         self.redis.sadd(self.token_set, token)
 
-    def get_tokens(self) -> Awaitable[set] | set:
+    def get_tokens(self) -> Awaitable[set[str]] | set:
         return self.redis.smembers(self.token_set)
 
     def delete_token(self, token: str) -> None:

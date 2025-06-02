@@ -1,12 +1,11 @@
 import logging
 
 import uvicorn
-from fastapi import FastAPI
-from starlette.responses import RedirectResponse
-
 from api import router as api_router_v1
 from app_lifespan import lifespan
 from core.config import settings
+from fastapi import FastAPI
+from starlette.responses import RedirectResponse
 
 app = FastAPI(
     title="Movies",
@@ -20,7 +19,7 @@ logging.basicConfig(level=settings.LOG_LEVEL, format=settings.LOG_FORMAT)
 
 
 @app.get("/")
-def root():
+def root() -> RedirectResponse:
     return RedirectResponse(url="/docs")
 
 

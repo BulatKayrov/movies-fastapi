@@ -73,4 +73,6 @@ ignore = []
 unfixable = []
 # Игнорировать определенный файл правилом
 [tool.ruff.lint.extend-per-file-ignores]
-"stuff.py" = ["T20"]
+"stuff.py" = ["ALL"]
+"manage.py" = ["ALL"]
+

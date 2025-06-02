@@ -1,11 +1,11 @@
 from logging import getLogger
-
-from fastapi import APIRouter, status
-from fastapi.params import Depends
+from typing import Annotated
 
 from api.v1.movie.crud import storage
 from api.v1.movie.dependecies import api_or_basic, find_movie_by_slug
 from api.v1.movie.schemas import SMovie, SMovieCreate, SMoviePartialUpdate, SMovieUpdate
+from fastapi import APIRouter, status
+from fastapi.params import Depends
 from tools import RESPONSES
 
 router = APIRouter(
@@ -20,36 +20,33 @@ router = APIRouter(
 logger = getLogger(__name__)
 
 
-@router.get(
-    path="/",
-    response_model=list[SMovie],
-)
+@router.get(path="/")
 def get_all_movies() -> list[SMovie]:
     return storage.find_all()
 
 
-@router.get(path="/{slug}", response_model=SMovie)
-def get_one_movie(movie=Depends(find_movie_by_slug)):
+@router.get(path="/{slug}")
+def get_one_movie(movie: Annotated[SMovie, Depends(find_movie_by_slug)]) -> SMovie:
     return movie
 
 
-@router.post(path="/", response_model=SMovie)
-def create_one_movie(data: SMovieCreate):
+@router.post(path="/")
+def create_one_movie(data: SMovieCreate) -> SMovie:
     return storage.create(data=data)
 
 
 @router.delete(
     path="/{slug}", responses={**RESPONSES}, status_code=status.HTTP_204_NO_CONTENT
 )
-def delete_one_movie(movie=Depends(find_movie_by_slug)):
+def delete_one_movie(movie: Annotated[SMovie, Depends(find_movie_by_slug)]) -> None:
     storage.delete_record(movie=movie)
 
 
-@router.put(path="/{slug}", response_model=SMovie)
-def update_one_movie(movie_in: SMovieUpdate, slug: str):
+@router.put(path="/{slug}")
+def update_one_movie(movie_in: SMovieUpdate, slug: str) -> SMovie:
     return storage.update_record(slug=slug, movie_in=movie_in)
 
 
-@router.patch(path="/{slug}", response_model=SMovie)
-def partial_update(movie_in: SMoviePartialUpdate, slug: str):
+@router.patch(path="/{slug}")
+def partial_update(movie_in: SMoviePartialUpdate, slug: str) -> SMovie:
     return storage.update(slug=slug, movie_in=movie_in, partial=True)
