@@ -76,3 +76,7 @@ unfixable = []
 "stuff.py" = ["ALL"]
 "manage.py" = ["ALL"]
 
+[dependency-groups]
+dev = [
+    "pre-commit>=4.2.0",
+]
