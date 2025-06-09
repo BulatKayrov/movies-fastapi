@@ -1,6 +1,11 @@
 from unittest import TestCase
 
-from api.v1.movie.schemas import SMovie, SMovieCreate, SMovieUpdate  # type: ignore
+from api.v1.movie.schemas import (  # type: ignore
+    SMovie,
+    SMovieCreate,
+    SMoviePartialUpdate,
+    SMovieUpdate,
+)
 
 
 class MovieCreateTestCase(TestCase):
@@ -29,3 +34,36 @@ class MovieUpdateTestCase(TestCase):
         self.assertEqual(movie_out.title, movie_update.title)
         self.assertEqual(movie_out.year, movie_update.year)
         self.assertEqual(movie_out.description, movie_update.description)
+
+
+class MoviePartialUpdateTestCase(TestCase):
+
+    def test_update_movie_partial(self) -> None:
+        movie_create = SMovieCreate(
+            slug="movie-partial",
+            title="test-partial-title",
+            description="test-partial-description",
+            year=1990,
+        )
+        movie = SMovie(**movie_create.model_dump())
+
+        for key, value in (
+            SMoviePartialUpdate()
+            .model_dump(exclude_none=True, exclude_unset=True)
+            .items()
+        ):
+            setattr(movie, key, value)
+
+        self.assertEqual(movie.title, movie_create.title)
+        self.assertEqual(movie.description, movie_create.description)
+        self.assertEqual(movie.year, movie_create.year)
+
+        for key, value in (
+            SMoviePartialUpdate(title="test-partial-title")
+            .model_dump(exclude_none=True, exclude_unset=True)
+            .items()
+        ):
+            setattr(movie, key, value)
+
+        self.assertEqual(movie.description, movie_create.description)
+        self.assertEqual(movie.year, movie_create.year)
