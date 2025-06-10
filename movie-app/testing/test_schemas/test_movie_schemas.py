@@ -7,6 +7,7 @@ from api.v1.movie.schemas import (  # type: ignore
     SMoviePartialUpdate,
     SMovieUpdate,
 )
+from pydantic import ValidationError
 
 
 class MovieCreateTestCase(TestCase):
@@ -99,3 +100,39 @@ class MovieCreateSubTestCase(TestCase):
                 movie = SMovieCreate(**data)
                 self.assertEqual(movie.slug, data["slug"])
                 self.assertEqual(movie.title, data["title"])
+
+
+class MovieRaisesTestCase(TestCase):
+
+    def test_create_movie_raise(self) -> None:
+        with self.assertRaises(ValidationError) as exc_error:
+            SMovieCreate(
+                slug="1234",
+                title="test-title",
+                description="test-description",
+                year=1990,
+            )
+
+        error_detail = exc_error.exception.errors()[0]["type"]
+        expected = "string_too"
+        self.assertIn(expected, error_detail)
+
+        with self.assertRaisesRegex(
+            ValidationError, expected_regex="String should have at least 5 characters"
+        ):
+            SMovieCreate(
+                slug="1234",
+                title="test-title",
+                description="test-description",
+                year=1990,
+            )
+
+        with self.assertRaisesRegex(
+            ValidationError, expected_regex="String should have at most 12 characters"
+        ):
+            SMovieCreate(
+                slug="1234" * 12,
+                title="test-title",
+                description="test-description",
+                year=1990,
+            )

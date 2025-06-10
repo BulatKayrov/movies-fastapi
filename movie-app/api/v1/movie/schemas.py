@@ -15,9 +15,9 @@ class SMovie(SMovieBase):
 
 
 class SMovieCreate(SMovie):
-    slug: Annotated[str, Len(min_length=1, max_length=20)]
-    title: Annotated[str, Len(min_length=1, max_length=100)]
-    description: Annotated[str, Len(min_length=1, max_length=100)]
+    slug: Annotated[str, Len(min_length=5, max_length=12)]
+    title: Annotated[str, Len(min_length=5, max_length=100)]
+    description: Annotated[str, Len(min_length=5, max_length=100)]
     year: int = Field(..., ge=1, le=9999)
 
 
