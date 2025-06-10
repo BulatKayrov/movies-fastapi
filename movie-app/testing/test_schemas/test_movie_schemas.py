@@ -1,3 +1,4 @@
+import uuid
 from unittest import TestCase
 
 from api.v1.movie.schemas import (  # type: ignore
@@ -67,3 +68,34 @@ class MoviePartialUpdateTestCase(TestCase):
 
         self.assertEqual(movie.description, movie_create.description)
         self.assertEqual(movie.year, movie_create.year)
+
+
+class MovieCreateSubTestCase(TestCase):
+
+    def test_create_movie_sub(self) -> None:
+        moke = [
+            {
+                "slug": "movie-sub",
+                "title": "test-sub-title",
+                "description": "description-sub",
+                "year": 1990,
+            },
+            {
+                "slug": "movie-sub" + str(uuid.uuid4()),
+                "title": "test-sub-title",
+                "description": "description-sub",
+                "year": 1990,
+            },
+            {
+                "slug": "movie-sub",
+                "title": "test-sub-title",
+                "description": "description-sub",
+                "year": 1_000_000,
+            },
+        ]
+
+        for data in moke:
+            with self.subTest(data=data, msg="invalid year or title"):
+                movie = SMovieCreate(**data)
+                self.assertEqual(movie.slug, data["slug"])
+                self.assertEqual(movie.title, data["title"])
