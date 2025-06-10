@@ -23,5 +23,9 @@ class Settings(BaseSettings):
     REDIS_DB: int = 0
     REDIS_HASH_KEY_DB: str = "movie-db"
 
+    # test
+    TEST_REDIS_HOST: str = "localhost"
+    TEST_REDIS_PORT: int = 1234
+
 
 settings = Settings()

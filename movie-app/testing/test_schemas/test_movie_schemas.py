@@ -42,7 +42,7 @@ class MoviePartialUpdateTestCase(TestCase):
 
     def test_update_movie_partial(self) -> None:
         movie_create = SMovieCreate(
-            slug="movie-partial",
+            slug="movie-partia",
             title="test-partial-title",
             description="test-partial-description",
             year=1990,
@@ -81,6 +81,7 @@ class MovieCreateSubTestCase(TestCase):
                 "description": "description-sub",
                 "year": 1990,
             },
+            # тут ошибочные данные
             {
                 "slug": "movie-sub" + str(uuid.uuid4()),
                 "title": "test-sub-title",

@@ -4,3 +4,9 @@ services:
     container_name: redis-movie
     ports:
       - "7777:6379"
+
+  test-redis:
+    image: redis:latest
+    container_name: test-redis
+    ports:
+      - "1234:6379"
