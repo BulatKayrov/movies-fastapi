@@ -1,7 +1,11 @@
 import unittest
+from os import getenv
 
 from api.v1.movie.auth.service.token_service import RedisTokenHelper
 from core.config import settings
+
+if getenv("TESTING") != "1":
+    raise OSError('Environment variable TESTING must be set to "1"')
 
 redis_tokens_test_service = RedisTokenHelper(
     host=settings.TEST_REDIS_HOST,
