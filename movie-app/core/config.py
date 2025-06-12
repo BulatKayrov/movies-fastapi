@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     # test
     TEST_REDIS_HOST: str = "localhost"
     TEST_REDIS_PORT: int = 1234
+    TEST_REDIS_DB_TOKENS_NAME: str = "tokens"
+    TEST_REDIS_DB_TOKENS: int = 1
 
 
 settings = Settings()
