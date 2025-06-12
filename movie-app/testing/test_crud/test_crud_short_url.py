@@ -1,7 +1,9 @@
 import unittest
+import uuid
+from typing import ClassVar
 
 from api.v1.movie.crud import StorageMovie
-from api.v1.movie.schemas import SMovieCreate, SMoviePartialUpdate, SMovieUpdate
+from api.v1.movie.schemas import SMovie, SMovieCreate, SMoviePartialUpdate, SMovieUpdate
 from core.config import settings
 from redis import Redis
 
@@ -57,3 +59,43 @@ class TestCRUDShortUrlTestCase(unittest.TestCase):
             slug=self.movie.slug, movie_in=short_url_in, partial=True
         )
         self.assertEqual(short_update.title, title)
+
+
+class MovieGetAndGetListTestCase(unittest.TestCase):
+    MOVIES: ClassVar[list[SMovieCreate | SMovie]] = []
+
+    @classmethod
+    def create_short_url(cls) -> SMovie:
+        return storage.create(
+            SMovieCreate(
+                slug=uuid.uuid4().hex[:10],
+                title="example",
+                year=2025,
+                description="example description",
+            )
+        )
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.MOVIES = [cls.create_short_url() for _ in range(5)]
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        for _ in cls.MOVIES:
+            storage.delete_record(movie=_)
+
+    def test_get_list(self):
+        list_movies = storage.find_all()
+
+        self.assertEqual(len(list_movies), len(self.MOVIES))
+        self.assertIsNotNone(list_movies)
+        self.assertIn(self.MOVIES[0], list_movies)
+
+    def test_get_by_slug(self):
+        expected_movie = self.MOVIES[0]
+        movie = storage.find_by_slug(slug=expected_movie.slug)
+
+        self.assertEqual(movie.title, expected_movie.title)
+        self.assertEqual(movie.year, expected_movie.year)
+        self.assertEqual(movie.description, expected_movie.description)
+        self.assertEqual(expected_movie, movie)
