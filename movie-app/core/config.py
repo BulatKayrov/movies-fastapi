@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     TEST_REDIS_PORT: int = 1234
     TEST_REDIS_DB_TOKENS_NAME: str = "tokens"
     TEST_REDIS_DB_TOKENS: int = 1
+    TEST_REDIS_DB_SHORT_URL: int = 0
 
 
 settings = Settings()
