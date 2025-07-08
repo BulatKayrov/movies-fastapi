@@ -21,14 +21,14 @@ _mock_data = [
 
 
 @pytest.mark.parametrize("data", _mock_data)
-def test_create_api_view(auth_client: TestClient, data: dict):
+def test_create_api_view(auth_client: TestClient, data: dict) -> None:
     url = app.url_path_for("movie:create")
     response = auth_client.post(url, json=data)
     assert response.status_code == 200
     assert response.json()["title"] == data["title"]
 
 
-def test_get_all_movie(auth_client: TestClient):
+def test_get_all_movie(auth_client: TestClient) -> None:
     url = app.url_path_for("movie:find_all")
     response = auth_client.get(url)
     assert response.status_code == 200
@@ -41,7 +41,7 @@ def test_get_all_movie(auth_client: TestClient):
 )
 def test_partial_update_movie(
     auth_client: TestClient, slug: str, data: SMoviePartialUpdate
-):
+) -> None:
     url = app.url_path_for("movie:partial_update", slug=slug)
     response = auth_client.patch(url, json=data.model_dump())
     assert response.status_code == 200
@@ -52,7 +52,7 @@ def test_partial_update_movie(
     "data",
     [SMovieUpdate(title="full update", description="full description", year=2000)],
 )
-def test_put_update_movie(auth_client: TestClient, data: SMovieUpdate):
+def test_put_update_movie(auth_client: TestClient, data: SMovieUpdate) -> None:
     url = app.url_path_for("movie:update", slug="slug99")
     response = auth_client.put(url, json=data.model_dump())
     assert response.status_code == 200
@@ -66,19 +66,19 @@ def test_put_update_movie(auth_client: TestClient, data: SMovieUpdate):
         "slug99",
     ],
 )
-def test_delete_movie(auth_client: TestClient, slug: str):
+def test_delete_movie(auth_client: TestClient, slug: str) -> None:
     url = app.url_path_for("movie:delete", slug=slug)
     response = auth_client.delete(url)
     assert response.status_code == 204
 
 
-def test_create_existing_movie(auth_client: TestClient):
+def test_create_existing_movie(auth_client: TestClient) -> None:
     url = app.url_path_for("movie:create")
     response = auth_client.post(url, json=_mock_data[0])
     assert response.status_code == 200
 
 
-def test_status_code_409(auth_client: TestClient):
+def test_status_code_409(auth_client: TestClient) -> None:
     response = auth_client.post(
         url=app.url_path_for("movie:create"), json=_mock_data[0]
     )

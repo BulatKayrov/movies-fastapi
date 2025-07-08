@@ -1,4 +1,5 @@
 import uuid
+from typing import Generator
 
 import pytest
 from _pytest.fixtures import SubRequest
@@ -27,14 +28,14 @@ def movie(request: SubRequest) -> SMovie:
 
 
 @pytest.fixture(scope="package")
-def token():
+def token() -> Generator[str, None]:
     token = redis_tokens_helper.generate_token_and_save()
     yield token
     redis_tokens_helper.delete_token(token)
 
 
 @pytest.fixture(scope="package")
-def auth_client(token: str):
+def auth_client(token: str) -> Generator[TestClient]:
     headers = {"Authorization": f"Bearer {token}"}
     with TestClient(app=app, headers=headers) as client:
         yield client

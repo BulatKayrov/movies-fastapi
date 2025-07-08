@@ -14,25 +14,25 @@ movie = SMovieCreate(
 )
 
 
-def test_create_movie():
+def test_create_movie() -> None:
     res = storage.create(data=movie)
     assert res.title == random_name
 
 
-def test_delete_movie_by_slug():
+def test_delete_movie_by_slug() -> None:
     slugs = [value.slug for value in storage.find_all()]
     for slug in slugs:
         storage.delete_by_slug(slug)
     assert storage.find_all() == []
 
 
-def test_delete_movie():
+def test_delete_movie() -> None:
     storage.delete_record(movie)
     res = storage.find_by_slug(slug=movie.slug)
     assert res is None
 
 
-def test_partial_update_movie():
+def test_partial_update_movie() -> None:
     new_title = "new title"
     res = storage.create(data=movie)
     new_obj = storage.update(
@@ -42,7 +42,7 @@ def test_partial_update_movie():
     storage.delete_record(res)
 
 
-def test_update_movie():
+def test_update_movie() -> None:
     res = storage.create(data=movie)
     new_data = {
         "title": "new title",

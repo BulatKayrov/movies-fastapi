@@ -25,22 +25,22 @@ class TestCRUDShortUrlTestCase(unittest.TestCase):
         "year": 2025,
     }
 
-    def setUp(self):
-        self.movie = self.create_short_url()
+    def setUp(self) -> None:
+        self.movie = self.create_movie()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         storage.delete_record(movie=self.movie)
 
-    def create_short_url(self):
+    def create_movie(self) -> SMovie:
         return storage.create(data=SMovieCreate(**self.mock))
 
-    def test_create_short_url(self):
+    def test_create_short_url(self) -> None:
         self.assertEqual(self.movie.title, self.mock["title"])
         self.assertEqual(self.movie.slug, self.mock["slug"])
         self.assertEqual(self.movie.description, self.mock["description"])
         self.assertEqual(self.movie.year, self.mock["year"])
 
-    def test_update(self):
+    def test_update(self) -> None:
         title = "New Title"
         year = 2000
 
@@ -51,7 +51,7 @@ class TestCRUDShortUrlTestCase(unittest.TestCase):
         self.assertEqual(short_update.title, title)
         self.assertEqual(short_update.year, year)
 
-    def test_update_partial(self):
+    def test_update_partial(self) -> None:
         title = "New Title"
 
         short_url_in = SMoviePartialUpdate(title=title)
@@ -84,12 +84,12 @@ class MovieGetAndGetListTestCase(unittest.TestCase):
         for _ in cls.MOVIES:
             storage.delete_record(movie=_)
 
-    def test_get_list(self):
+    def test_get_list(self) -> None:
         list_movies = storage.find_all()
         self.assertIsNotNone(list_movies)
         self.assertIn(self.MOVIES[0], list_movies)
 
-    def test_get_by_slug(self):
+    def test_get_by_slug(self) -> None:
         expected_movie = self.MOVIES[0]
         movie = storage.find_by_slug(slug=expected_movie.slug)
 

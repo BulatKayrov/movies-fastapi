@@ -2,7 +2,7 @@ from main import app
 from starlette.testclient import TestClient
 
 
-def test_status_200():
+def test_status_200() -> None:
     client = TestClient(app)
     url = app.url_path_for("status_code_200")
     response = client.get(url)
