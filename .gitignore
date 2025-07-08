@@ -9,6 +9,8 @@ wheels/
 # Virtual environments
 .venv
 
+./movie-app/.coverage
+
 
 *.py[cod]
 *$py.class

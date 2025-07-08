@@ -1,0 +1,9 @@
+[run]
+branch = on
+command_line = -m pytest
+omit =
+    manage.py
+    app_lifespan.py
+
+[html]
+directory = html_report
