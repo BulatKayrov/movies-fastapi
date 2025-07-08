@@ -73,6 +73,9 @@ class StorageMovie:
             status_code=status.HTTP_409_CONFLICT, detail="Movie not found"
         )
 
+    def exists(self, slug: str) -> bool:
+        return bool(self.find_by_slug(slug=slug))
+
 
 redis_movie = Redis(
     host=settings.REDIS_HOST,
