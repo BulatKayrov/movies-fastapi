@@ -1,5 +1,5 @@
 import typer
-from api.v1.movie.auth.service import redis_tokens_helper
+from api.v1.movie.service import redis_tokens_helper
 from rich import print
 from rich.markdown import Markdown
 

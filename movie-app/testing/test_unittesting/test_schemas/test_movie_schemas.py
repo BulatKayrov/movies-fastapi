@@ -83,7 +83,7 @@ class MovieCreateSubTestCase(TestCase):
             },
             # тут ошибочные данные
             {
-                "slug": "movie-sub" + str(uuid.uuid4()),
+                "slug": "movie-sub" + str(uuid.uuid4().hex[8]),
                 "title": "test-sub-title",
                 "description": "description-sub",
                 "year": 1990,
@@ -92,7 +92,7 @@ class MovieCreateSubTestCase(TestCase):
                 "slug": "movie-sub",
                 "title": "test-sub-title",
                 "description": "description-sub",
-                "year": 1_000_000,
+                "year": 1000,
             },
         ]
 

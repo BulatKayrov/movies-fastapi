@@ -1,4 +1,5 @@
 import logging
+from os import getenv
 from pathlib import Path
 
 from pydantic_settings import BaseSettings
@@ -13,7 +14,7 @@ class Settings(BaseSettings):
 
     # redis
     REDIS_HOST: str = "localhost"
-    REDIS_PORT: int = 7777
+    REDIS_PORT: int = int(getenv("REDIS_PORT", default=0)) or 7777
 
     REDIS_DB_TOKENS_NAME: str = "tokens"
     REDIS_DB_TOKENS: int = 1
@@ -23,7 +24,7 @@ class Settings(BaseSettings):
     REDIS_DB: int = 0
     REDIS_HASH_KEY_DB: str = "movie-db"
 
-    # test
+    # testing env-var for unittest
     TEST_REDIS_HOST: str = "localhost"
     TEST_REDIS_PORT: int = 1234
     TEST_REDIS_DB_TOKENS_NAME: str = "tokens"

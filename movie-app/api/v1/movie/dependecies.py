@@ -1,8 +1,5 @@
 import logging
 
-from api.v1.movie.auth.service import redis_auth_helper, redis_tokens_helper
-from api.v1.movie.crud import storage
-from api.v1.movie.schemas import SMovie
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import (
     HTTPAuthorizationCredentials,
@@ -10,6 +7,10 @@ from fastapi.security import (
     HTTPBasicCredentials,
     HTTPBearer,
 )
+
+from api.v1.movie.crud import storage
+from api.v1.movie.schemas import SMovie
+from api.v1.movie.service import redis_auth_helper, redis_tokens_helper
 
 logger = logging.getLogger(__name__)
 UNSAFE_METHODS = frozenset({"POST", "PUT", "PATCH", "DELETE"})
@@ -69,6 +70,7 @@ def get_token(
 def validate_token(api_token: HTTPAuthorizationCredentials) -> None:
     if redis_tokens_helper.token_exists(api_token.credentials):
         return None
+
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid API token"
     )
@@ -95,10 +97,10 @@ def api_or_basic(
         return
 
     if credentials:
-        validate_basic(credentials=credentials)
+        return validate_basic(credentials=credentials)
 
     if api_token:
-        validate_token(api_token=api_token)
+        return validate_token(api_token=api_token)
 
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

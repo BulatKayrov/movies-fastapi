@@ -1,24 +1,18 @@
 import logging
 
-from api.v1.movie.schemas import SMovie, SMovieCreate, SMoviePartialUpdate, SMovieUpdate
 from core.config import settings
 from fastapi import HTTPException, status
 from redis import Redis
 
-logger = logging.getLogger(__name__)
+from api.v1.movie.schemas import SMovie, SMovieCreate, SMoviePartialUpdate, SMovieUpdate
 
-_redis_movie = Redis(
-    host=settings.REDIS_HOST,
-    port=settings.REDIS_PORT,
-    db=settings.REDIS_DB,
-    decode_responses=True,
-)
+logger = logging.getLogger(__name__)
 
 
 class StorageMovie:
 
-    def __init__(self, helper: Redis | None = None) -> None:
-        self.redis_movie = helper if helper else _redis_movie
+    def __init__(self, instance_redis: Redis) -> None:
+        self.redis_movie = instance_redis
 
     def save(self, data: SMovie) -> None:
         self.redis_movie.hset(
@@ -31,7 +25,7 @@ class StorageMovie:
         values = self.redis_movie.hvals(name=settings.REDIS_HASH_KEY_DB)
         return [SMovie.model_validate_json(item) for item in values]
 
-    def find_by_slug(self, slug: str) -> SMovie:
+    def find_by_slug(self, slug: str) -> SMovie | None:
         obj = self.redis_movie.hget(name=settings.REDIS_HASH_KEY_DB, key=slug)
         if obj:
             return SMovie.model_validate_json(obj)
@@ -80,4 +74,12 @@ class StorageMovie:
         )
 
 
-storage = StorageMovie()
+redis_movie = Redis(
+    host=settings.REDIS_HOST,
+    port=settings.REDIS_PORT,
+    db=settings.REDIS_DB,
+    decode_responses=True,
+)
+
+# storage = StorageMovie(testings_flag=True)
+storage = StorageMovie(instance_redis=redis_movie)

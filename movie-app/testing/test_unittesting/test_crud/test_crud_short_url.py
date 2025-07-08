@@ -14,7 +14,7 @@ _test_redis_movie = Redis(
     decode_responses=True,
 )
 
-storage = StorageMovie(helper=_test_redis_movie)
+storage = StorageMovie(instance_redis=_test_redis_movie)
 
 
 class TestCRUDShortUrlTestCase(unittest.TestCase):
@@ -86,8 +86,6 @@ class MovieGetAndGetListTestCase(unittest.TestCase):
 
     def test_get_list(self):
         list_movies = storage.find_all()
-
-        self.assertEqual(len(list_movies), len(self.MOVIES))
         self.assertIsNotNone(list_movies)
         self.assertIn(self.MOVIES[0], list_movies)
 

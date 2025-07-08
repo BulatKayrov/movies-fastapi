@@ -35,10 +35,8 @@ class AbstractTokenHelper(ABC):
 
 
 class RedisTokenHelper(AbstractTokenHelper):
-    def __init__(
-        self, host: str, port: int, redis_db: int, tokens_set_name: str
-    ) -> None:
-        self.redis = Redis(host=host, port=port, decode_responses=True, db=redis_db)
+    def __init__(self, instance_redis: "Redis", tokens_set_name: str) -> None:
+        self.redis = instance_redis
         self.token_set = tokens_set_name
 
     def token_exists(self, token: str) -> bool:
@@ -59,8 +57,11 @@ class RedisTokenHelper(AbstractTokenHelper):
 
 
 redis_tokens_helper = RedisTokenHelper(
-    host=settings.REDIS_HOST,
-    port=settings.REDIS_PORT,
-    redis_db=settings.REDIS_DB_TOKENS,
+    instance_redis=Redis(
+        host=settings.REDIS_HOST,
+        port=settings.REDIS_PORT,
+        decode_responses=True,
+        db=settings.REDIS_DB_TOKENS,
+    ),
     tokens_set_name=settings.REDIS_DB_TOKENS_NAME,
 )

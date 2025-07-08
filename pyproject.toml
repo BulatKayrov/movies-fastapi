@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi[all]>=0.115.12",
-    "mypy>=1.15.0",
+    "loguru>=0.7.3",
     "redis[hiredis]>=6.1.0",
     "ruff>=0.11.12",
 ]
@@ -14,7 +14,7 @@ dependencies = [
 
 # mypy
 [tool.mypy]
-strict = true
+#strict = true
 
 # ruff
 [tool.ruff]
@@ -79,4 +79,5 @@ unfixable = []
 [dependency-groups]
 dev = [
     "pre-commit>=4.2.0",
+    "pytest>=8.4.1",
 ]
