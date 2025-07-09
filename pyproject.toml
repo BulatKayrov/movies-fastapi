@@ -83,3 +83,10 @@ dev = [
     "pytest>=8.4.1",
     "pytest-cov>=6.2.1",
 ]
+
+# pytest settings
+[tool.pytest.ini_options]
+minversion = "8.4"
+addopts = "-ra -q -v"
+log_cli = true
+log_cli_level = "INFO"
