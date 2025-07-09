@@ -1,7 +1,9 @@
+import pytest
 from main import app
 from starlette.testclient import TestClient
 
 
+@pytest.mark.apitest
 class TestStatusCodeView:
 
     def test_status_200(self) -> None:
