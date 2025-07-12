@@ -15,7 +15,7 @@ on:
 
 jobs:
 
-  run-black:
+  run-checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

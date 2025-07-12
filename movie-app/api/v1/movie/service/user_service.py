@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 
-from core.config import settings
 from redis import Redis
+
+from core.config import settings
 
 
 class AbstractUserHelper(ABC):

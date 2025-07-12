@@ -1,12 +1,13 @@
 import logging
 
 import uvicorn
-from api import router as api_router_v1
-from app_lifespan import lifespan
-from core.config import settings
 from fastapi import FastAPI
 from loguru import logger
 from starlette.responses import RedirectResponse
+
+from api import router as api_router_v1
+from app_lifespan import lifespan
+from core.config import settings
 
 app = FastAPI(
     title="Movies",

@@ -3,11 +3,12 @@ from typing import Generator
 
 import pytest
 from _pytest.fixtures import SubRequest
+from starlette.testclient import TestClient
+
 from api.v1.movie.crud import storage
 from api.v1.movie.schemas import SMovie, SMovieCreate
 from api.v1.movie.service import redis_tokens_helper
 from main import app
-from starlette.testclient import TestClient
 
 
 def create_movie(

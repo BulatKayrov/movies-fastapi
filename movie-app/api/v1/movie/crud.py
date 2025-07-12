@@ -1,10 +1,10 @@
 import logging
 
-from core.config import settings
 from fastapi import HTTPException, status
 from redis import Redis
 
 from api.v1.movie.schemas import SMovie, SMovieCreate, SMoviePartialUpdate, SMovieUpdate
+from core.config import settings
 
 logger = logging.getLogger(__name__)
 
