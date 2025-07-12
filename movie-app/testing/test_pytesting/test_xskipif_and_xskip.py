@@ -10,7 +10,7 @@ def test_other_schema() -> None:
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="requires Python 3.12 or higher")
-def test_other_schema_skipif() -> None:
+def test_other_schema_skipif():
     pass
 
 
