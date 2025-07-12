@@ -91,3 +91,8 @@ addopts = "-ra -q -v --strict-markers"
 log_cli = true
 log_cli_level = "INFO"
 markers = ["apitest: test any http api call"]
+
+
+# uv
+[tool.uv]
+required-version = "~=0.7.20"
