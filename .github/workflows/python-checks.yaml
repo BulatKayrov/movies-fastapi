@@ -9,6 +9,8 @@ on:
     branches:
       - master
       - main
+    paths:
+      - "movie-app/**"
 
 jobs:
   linters:
