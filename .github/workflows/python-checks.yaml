@@ -5,6 +5,12 @@ on:
     branches:
       - master
       - main
+  pull_request:
+    branches:
+      - master
+      - main
+    paths:
+      - "movie-app/**"
 
 jobs:
   linters:
