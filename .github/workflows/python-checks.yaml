@@ -28,4 +28,4 @@ jobs:
           pip install "black==25.1.0"
 
       - name: Test with black
-        run: black ./
+        run: black --check --diff ./
