@@ -18,7 +18,7 @@ dependencies = [
 
 # ruff
 [tool.ruff]
-
+required-version = ">= 0.11.12"
 # игнорирование
 exclude = [
     ".bzr",
@@ -51,7 +51,7 @@ exclude = [
 ]
 
 # откуда проверять
-src = ['url-shortener']
+src = ['movie-app']
 
 # Same as Black.
 line-length = 88
@@ -73,7 +73,6 @@ ignore = []
 unfixable = []
 # Игнорировать определенный файл правилом
 [tool.ruff.lint.extend-per-file-ignores]
-"stuff.py" = ["ALL"]
 "manage.py" = ["ALL"]
 
 [dependency-groups]
