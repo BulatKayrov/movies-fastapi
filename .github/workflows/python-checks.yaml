@@ -14,7 +14,8 @@ on:
       - ".github/workflows/**"
 
 jobs:
-  run-black:
+
+  run-checks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,3 +31,18 @@ jobs:
 
       - name: Test with black
         run: black --check --diff ./
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
+
+      - name: Run ruff
+        uses: astral-sh/ruff-action@v3
+        with:
+          args: 'check'
+          version-file: 'pyproject.toml'
+
+      - name: Show dependencies
+        run: uv tree

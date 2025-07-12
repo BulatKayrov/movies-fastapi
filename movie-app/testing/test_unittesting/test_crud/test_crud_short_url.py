@@ -2,10 +2,11 @@ import unittest
 import uuid
 from typing import ClassVar
 
+from redis import Redis
+
 from api.v1.movie.crud import StorageMovie
 from api.v1.movie.schemas import SMovie, SMovieCreate, SMoviePartialUpdate, SMovieUpdate
 from core.config import settings
-from redis import Redis
 
 _test_redis_movie = Redis(
     host=settings.TEST_REDIS_HOST,

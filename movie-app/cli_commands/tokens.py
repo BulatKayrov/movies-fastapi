@@ -1,7 +1,8 @@
 import typer
-from api.v1.movie.service import redis_tokens_helper
 from rich import print
 from rich.markdown import Markdown
+
+from api.v1.movie.service import redis_tokens_helper
 
 app = typer.Typer(no_args_is_help=True, rich_markup_mode="rich")
 

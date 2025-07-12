@@ -1,8 +1,9 @@
+from starlette import status
+from starlette.testclient import TestClient
+
 from api.v1.movie.crud import storage
 from api.v1.movie.schemas import SMovie
 from main import app
-from starlette import status
-from starlette.testclient import TestClient
 
 
 def test_create_movie_params(auth_client: TestClient, movie: SMovie) -> None:

@@ -2,8 +2,9 @@ import secrets
 from abc import ABC, abstractmethod
 from typing import Awaitable
 
-from core.config import settings
 from redis import Redis
+
+from core.config import settings
 
 
 class AbstractTokenHelper(ABC):

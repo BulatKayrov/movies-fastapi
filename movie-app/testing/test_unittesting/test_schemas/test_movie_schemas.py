@@ -1,13 +1,14 @@
 import uuid
 from unittest import TestCase
 
+from pydantic import ValidationError
+
 from api.v1.movie.schemas import (  # type: ignore
     SMovie,
     SMovieCreate,
     SMoviePartialUpdate,
     SMovieUpdate,
 )
-from pydantic import ValidationError
 
 
 class MovieCreateTestCase(TestCase):

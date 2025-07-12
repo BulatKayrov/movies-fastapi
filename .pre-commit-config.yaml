@@ -17,4 +17,5 @@ repos:
     rev: v0.11.12
     hooks:
       - id: ruff-check
-        args: [ --fix, --ignore=ANN201 ]
+        args: [ --fix, ]
+# --ignore=ANN201

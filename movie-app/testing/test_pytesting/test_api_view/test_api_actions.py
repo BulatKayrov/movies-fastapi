@@ -1,8 +1,9 @@
 import pytest
+from starlette.testclient import TestClient
+
 from api.v1.movie.crud import storage
 from api.v1.movie.schemas import SMoviePartialUpdate, SMovieUpdate
 from main import app
-from starlette.testclient import TestClient
 
 _mock_data = [
     {

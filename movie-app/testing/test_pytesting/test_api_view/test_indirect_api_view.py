@@ -2,12 +2,12 @@ from typing import Generator
 
 import pytest
 from _pytest.fixtures import SubRequest
-from api.v1.movie.crud import storage
-from api.v1.movie.schemas import SMovie
-from main import app
 from starlette import status
 from starlette.testclient import TestClient
 
+from api.v1.movie.crud import storage
+from api.v1.movie.schemas import SMovie
+from main import app
 from testing.test_pytesting.test_api_view.conftest import create_movie
 
 
