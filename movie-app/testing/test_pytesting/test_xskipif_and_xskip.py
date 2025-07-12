@@ -15,6 +15,6 @@ def test_other_schema_skipif() -> None:
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="requires platform win32 or higher")
-def test_other_schema_skipif_v2() -> None:
+def test_other_schema_skipif_v2():
     """Пропустить этот тест, если платформа Windows (потому что требуется не-Windows или более новая версия)"""
     assert sys.platform != "win32"
