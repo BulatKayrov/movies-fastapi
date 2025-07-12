@@ -11,6 +11,7 @@ on:
       - main
     paths:
       - "movie-app/**"
+      - ".github/workflows/**"
 
 jobs:
   run-black:
