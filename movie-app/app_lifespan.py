@@ -9,3 +9,4 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
     print("check run GH Actions")
     yield
 
+
