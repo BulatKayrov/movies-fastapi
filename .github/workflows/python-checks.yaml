@@ -14,7 +14,6 @@ on:
       - ".github/workflows/**"
 
 jobs:
-
   run-checks:
     runs-on: ubuntu-latest
     steps:
