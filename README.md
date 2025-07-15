@@ -17,6 +17,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 [![Uvicorn](https://img.shields.io/badge/Uvicorn-44A542?logo=python&logoColor=white)](https://www.uvicorn.org/)
+[![codecov](https://codecov.io/gh/{{REPOSITORY}}/branch/main/graph/badge.svg)](https://codecov.io/gh/{{REPOSITORY}})
 
 ## 🚀 Основные возможности
 

@@ -80,7 +80,14 @@ jobs:
 
       # pytest
       - name: Run Pytest
-        run: uv run pytest
+        run: uv run pytest movie-app --cov=movie-app --cov-report=xml:coverage.xml
         env:
           testing: 1
           REDIS_PORT: 1234
+
+      - name: Upload coverage reports to Codecov with GitHub Action
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          fail_ci_if_error: 'true'
