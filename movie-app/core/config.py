@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     LOG_FORMAT: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
     # redis
-    REDIS_HOST: str = "localhost"
+    REDIS_HOST: str = getenv("REDIS_HOST", "localhost")
     REDIS_PORT: int = int(getenv("REDIS_PORT", default=0)) or 7777
 
     REDIS_DB_TOKENS_NAME: str = "tokens"
