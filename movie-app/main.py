@@ -2,7 +2,7 @@ import logging
 
 import uvicorn
 from fastapi import FastAPI
-from loguru import logger
+from prometheus_fastapi_instrumentator import Instrumentator
 from starlette.responses import RedirectResponse
 
 from api import router as api_router_v1
@@ -16,9 +16,10 @@ app = FastAPI(
     docs_url="/docs",
     lifespan=lifespan,
 )
+Instrumentator().instrument(app, metric_namespace="fastapi").expose(app)
 app.include_router(api_router_v1)
 logging.basicConfig(level=settings.LOG_LEVEL, format=settings.LOG_FORMAT)
-# logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @app.get("/")
