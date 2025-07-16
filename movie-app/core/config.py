@@ -1,4 +1,5 @@
 import logging
+from os import getenv
 from pathlib import Path
 
 from pydantic_settings import BaseSettings
@@ -12,11 +13,11 @@ class Settings(BaseSettings):
     LOG_FORMAT: str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
     # redis
-    REDIS_HOST: str = "redis-movie"
-    REDIS_PORT: int = 6379
+    # REDIS_HOST: str = "redis-movie"
+    # REDIS_PORT: int = 6379
 
-    # REDIS_HOST: str = getenv("REDIS_HOST", "localhost")
-    # REDIS_PORT: int = int(getenv("REDIS_PORT", default=0)) or 7777
+    REDIS_HOST: str = getenv("REDIS_HOST", "localhost")
+    REDIS_PORT: int = int(getenv("REDIS_PORT", default=0)) or 7777
 
     REDIS_DB_TOKENS_NAME: str = "tokens"
     REDIS_DB_TOKENS: int = 1
